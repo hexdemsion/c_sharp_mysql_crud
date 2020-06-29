@@ -22,9 +22,9 @@ namespace mysql_koneksi
         {
             MySqlBaseConnectionStringBuilder builder = new MySqlConnectionStringBuilder();
             builder.Server = "localhost";
-            builder.UserID = "ro324324ot";
+            builder.UserID = "root";
             builder.Password = "";
-            builder.Database = "pt_bukit_makmur";
+            builder.Database = "database_latihan_visual";
 
             String connString = builder.ToString();
             builder = null;
@@ -32,43 +32,27 @@ namespace mysql_koneksi
             return dbConn;
         }
 
-        private void cek_koneksi(object sender, EventArgs e)
-        {
-            try
-            {
-                MySqlConnection koneksi = buat_koneksi();
-                koneksi.Open();
-                MessageBox.Show("koneksi MySQL berhasil");
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("koneksi MySQL gagal");
-            }
-        }
-
         private void ambil_data(object sender, EventArgs e)
         {
+            DataTable tabelmhs = new DataTable();
             MySqlConnection koneksi = buat_koneksi();
-            MySqlCommand cmd = new MySqlCommand("SELECT * FROM karyawan", koneksi);
+            MySqlCommand cmd = new MySqlCommand("SELECT * FROM mahasiswa", koneksi);
+
             try
             {
                 koneksi.Open();
-                MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    int id = (int)reader["id"];
-                    String nama = reader["nama"].ToString();
-                    String alamat = reader["alamat"].ToString();
-                    String info_karyawan = nama + " | " + alamat;
-
-                    MessageBox.Show(info_karyawan);
-                }
-                koneksi.Close();
             }
             catch (Exception)
             {
-                MessageBox.Show("koneksi MySQL gagal");
+                MessageBox.Show("Gagal membuka koneksi MySQL");
             }
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+            cmd.ExecuteNonQuery();
+            adapter.Fill(tabelmhs);
+            koneksi.Close();
+            dataGridView1.DataSource = tabelmhs;
         }
+
     }
 }
