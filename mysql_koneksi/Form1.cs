@@ -36,23 +36,51 @@ namespace mysql_koneksi
         {
             DataTable tabelmhs = new DataTable();
             MySqlConnection koneksi = buat_koneksi();
-            MySqlCommand cmd = new MySqlCommand("SELECT * FROM mahasiswa", koneksi);
-
             try
             {
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM mahasiswa", koneksi);
                 koneksi.Open();
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                cmd.ExecuteNonQuery();
+                adapter.Fill(tabelmhs);
+                koneksi.Close();
+                dataGridView1.DataSource = tabelmhs;
             }
             catch (Exception)
             {
-                MessageBox.Show("Gagal membuka koneksi MySQL");
+                MessageBox.Show("Error mengambil data");
             }
-
-            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-            cmd.ExecuteNonQuery();
-            adapter.Fill(tabelmhs);
-            koneksi.Close();
-            dataGridView1.DataSource = tabelmhs;
         }
 
+        private void insert_data(object sender, EventArgs e)
+        {
+            String nama = textBox1.Text;
+            String alamat = textBox2.Text;
+            String stb = textBox3.Text;
+            int nilai_tugas = int.Parse(textBox4.Text);
+            int nilai_mid = int.Parse(textBox5.Text);
+            int nilai_final = int.Parse(textBox6.Text);
+            int nilai_akhir = int.Parse(textBox7.Text);
+            String nilai_huruf = textBox8.Text;
+            String keterangan = textBox9.Text;
+
+            try
+            {
+                String query_input = 
+                    "INSERT INTO mahasiswa (nama,alamat,stb,nilai_tugas,nilai_mid,nilai_final,nilai_akhir,nilai_huruf,keterangan) " +
+                    "VALUES ('" + nama + "', '" + alamat + "', '" + stb + "', '" + nilai_tugas + "', '" + nilai_mid + "', '" + nilai_final +
+                    "', '" + nilai_akhir + "', '" + nilai_huruf + "', '" + keterangan + "') ";
+                MySqlConnection koneksi = buat_koneksi();
+                MySqlCommand cmd = new MySqlCommand(query_input, koneksi);
+                koneksi.Open();
+                cmd.ExecuteNonQuery();
+                koneksi.Close();
+                MessageBox.Show("Data berhasil di-input");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Data gagal di-input");
+            }
+        }
     }
 }
